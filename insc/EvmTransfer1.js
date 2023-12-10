@@ -2,7 +2,7 @@ const ethers = require('ethers')
 const { default: axios } = require('axios')
 const cheerio = require('cheerio')
 
-const CheckMiner = false
+const CheckMiner = true
 const Mode = 'Q'          // Q 表示查询  T 表示发送
 let   NumOfTrans = 2000      // 当Mode=Q 表示要查询的张数，当Mode=T 表示要发送的张数
 const PrivatePKey = ''    // 私钥， Mode=Q 无需私钥
@@ -186,4 +186,4 @@ return 1
 }
 
 
-EvmInscTransfer(bsc20BsciChecker)
+EvmInscTransfer(bnb48FansChecker)
