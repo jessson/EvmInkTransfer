@@ -1,0 +1,20 @@
+{
+  "name": "pow_insc",
+  "version": "1.0.0",
+  "description": "This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "ethers": "^5.7.0",
+	  "cheerio": "^1.0.0-rc.12",
+    "install": "^0.13.0",
+    "npm": "^9.7.2"
+  }
+}
