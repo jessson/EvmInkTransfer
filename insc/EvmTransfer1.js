@@ -11,7 +11,7 @@ const GasPrice = 3.1      // 3.1 gwei
 const SendAddr = ''       // 发送地址
 const RecvAddr = ''       // 接受地址
                           // InscHex  铭文16进制
-const InscHex = '0x646174613a2c7b2270223a226273632d3230222c226f70223a226d696e74222c227469636b223a2262736369222c22616d74223a2231303030227d'
+const InscHex = '0x646174613a2c7b2270223a22626e622d3438222c226f70223a226d696e74222c227469636b223a2266616e73222c22616d74223a2231227d'
 
 class InscInfo {
     constructor(inscInfo) {
@@ -162,7 +162,6 @@ async function EvmInscTransfer(CheckerFunc) {
 //==================================================================
 
 function bnb48FansChecker(tx, miner, blockNumber, inscPos) {
-  addr = addr.toLowerCase()
   const number = parseInt(blockNumber)
   if (number <= 34175786 || number > 34183076) {
       return -1
