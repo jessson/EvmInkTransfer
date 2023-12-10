@@ -109,6 +109,7 @@ async function EvmInscTransfer(CheckerFunc) {
     }
     console.log("总张数:", inscs.length)
     let suc = 0
+    let vaildcnt = 0
     NumOfTrans = NumOfTrans > inscs.length ? inscs.length : NumOfTrans
     for (let i = 0; i < inscs.length && suc < NumOfTrans; i++) {
         const mintTx = await Provider.getTransaction(inscs[i].mintHash)
@@ -150,7 +151,8 @@ async function EvmInscTransfer(CheckerFunc) {
                 suc++
             }
         } else {
-          console.log("有效hash", inscs[i].mintHash, "owner:", inscs[i].ownerAddr, "mint", inscs[i].creatAddr)
+          vaildcnt++
+          console.log("有效hash", inscs[i].mintHash, "有效张数", vaildcnt, "owner:", inscs[i].ownerAddr, "mint", inscs[i].creatAddr)
         }
     }
 }
