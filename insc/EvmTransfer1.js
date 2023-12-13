@@ -3,12 +3,12 @@ const { default: axios } = require('axios')
 const cheerio = require('cheerio')
 
 const TransDirect = false // false表示需要检查有效性，true表示直接转账 （对于bsci这种可以直接转，去evm看balance就行）
-const GetMinerAddr = false    // true 表示获取矿工地址，false不获取
+const GetMinerAddr = true    // true 表示获取矿工地址，false不获取
 const Mode = 'Q'          // Q 表示查询  T 表示发送
-let NumOfTrans = 2000      // 当Mode=Q 表示要查询的张数，当Mode=T 表示要发送的张数
+let NumOfTrans = 1      // 当Mode=Q 表示要查询的张数，当Mode=T 表示要发送的张数
 const PrivatePKey = ''    // 私钥， Mode=Q 无需私钥
-const Provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed1.defibit.io")
-const GasPrice = 3.1      // 3.1 gwei
+const Provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed3.defibit.io")
+const GasPrice = 3.0      // 3.0 gwei
 const SendAddr = ''       // 发送地址
 const RecvAddr = ''       // 接受地址
 // InscHex  铭文16进制
@@ -65,7 +65,13 @@ async function queryInsc(offset, addr = SendAddr) {
     "operationName": "GetUserInscriptions"
   }
 
-  const res = await axios.post(url, payload).catch(err => { console.log(err) })
+  const instance = axios.create({
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': "Chrome/119.0.0.0 Safari/537.36",
+    },
+  });
+  const res = await instance.post(url, payload).catch(err => { console.log(err) })
   if (res == undefined || res.data == undefined) {
     return null
   }
@@ -98,6 +104,10 @@ async function EvmInscTransfer(CheckerFunc) {
   let wallet = null
   if (Mode === 'T') {
     wallet = new ethers.Wallet(PrivatePKey, Provider)
+    if (wallet.address.toLowerCase() != SendAddr.toLowerCase()) {
+      console.log("私钥不匹配")
+      return
+    }
   }
 
   let inscs = []
@@ -110,6 +120,10 @@ async function EvmInscTransfer(CheckerFunc) {
   }
 
   console.log("总张数:", inscs.length)
+  if(Mode == 'Q' && TransDirect) {
+    return
+  }
+
   let suc = 0
   let vaildcnt = 0
   let nonce = -1
@@ -153,12 +167,16 @@ async function EvmInscTransfer(CheckerFunc) {
       console.log('转移hash', mintHash, sendTx)
 
       const signTx = await wallet.signTransaction(sendTx);
-      const recpit = await wallet.provider.sendTransaction(signTx).catch(err => {
-        console.log(err)
-      })
-      if (recpit != undefined) {
-        suc++
+      if (i % 100 == 0) {
+        await wallet.provider.sendTransaction(signTx).catch(err => {
+          console.log(err)
+        })
+      } else {
+        wallet.provider.sendTransaction(signTx).catch(err => {
+          console.log(err)
+        })
       }
+      suc++
     } else {
       vaildcnt++
       console.log("有效hash", mintHash, "有效张数", vaildcnt, "owner:", inscs[i].ownerAddr, "mint", inscs[i].creatAddr)
